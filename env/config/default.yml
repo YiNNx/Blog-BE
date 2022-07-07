@@ -1,0 +1,31 @@
+# 默认的配置文件，通常用于本地调试
+app:
+  addr: ":3000"
+  prefix: "/api/v1"
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
+db:
+  addr: "localhost:27017"
+  db: "db_name"
+  username: ""
+  password: ""
+jwt:
+  secret: "jwtsecret"
+  skip: # jwt验证器跳过的目录，使用正则表达式
+    - "/api/v1/.*"
+    - "/api/v2/.*"
+qiniu:
+  access_key: "access_key"
+  secret_key: "secret_key"
+  bucket: "bucket"
+wechat:
+  app_id: "app_id"
+  app_secret: "app_secret"
+
+logConf:
+  log_path: "/app/log"
+  log_file_name: "blog-1.0.log"
+
+debug: true
