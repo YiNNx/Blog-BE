@@ -4,18 +4,17 @@ go 1.18
 
 require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/go-pg/pg/extra/pgdebug v0.2.0
 	github.com/go-pg/pg/v10 v10.10.6
 	github.com/go-redis/redis/v7 v7.4.1
 	github.com/imroc/req v0.3.2
 	github.com/json-iterator/go v1.1.12
 	github.com/labstack/echo/v4 v4.7.2
 	github.com/lestrrat/go-file-rotatelogs v0.0.0-20180223000712-d3151e2a480f
-	github.com/qiniu/api.v7/v7 v7.8.2
+	github.com/qiniu/go-sdk/v7 v7.13.0
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 	github.com/sirupsen/logrus v1.8.1
 	go.mongodb.org/mongo-driver v1.9.1
-	golang.org/x/net v0.0.0-20211015210444-4f30a5c0130f
+	golang.org/x/net v0.0.0-20220708220712-1185a9018129
 	gopkg.in/go-playground/validator.v9 v9.31.0
 	gopkg.in/yaml.v2 v2.4.0
 )
@@ -28,7 +27,6 @@ require (
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/golang/snappy v0.0.1 // indirect
-	github.com/gookit/color v1.3.6 // indirect
 	github.com/jehiah/go-strftime v0.0.0-20171201141054-1d33003b3869 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jonboulle/clockwork v0.3.0 // indirect
@@ -56,7 +54,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
 	golang.org/x/sync v0.0.0-20201207232520-09787c993a3a // indirect
-	golang.org/x/sys v0.0.0-20211103235746-7861aae1554b // indirect
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
 	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect

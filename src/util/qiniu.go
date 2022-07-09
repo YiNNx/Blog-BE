@@ -3,10 +3,10 @@ package util
 import (
 	"fmt"
 
-	"blog-1.0/config"
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
+	"github.com/qiniu/go-sdk/v7/storage"
 
-	"github.com/qiniu/api.v7/v7/auth/qbox"
-	"github.com/qiniu/api.v7/v7/storage"
+	"blog-1.0/config"
 )
 
 var (

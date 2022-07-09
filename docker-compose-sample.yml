@@ -8,45 +8,46 @@ services:
       - /etc/localtime:/etc/localtime:ro
     environment:
       - TZ=Asia/Shanghai
-      - MONGO_INITDB_ROOT_USERNAME=<%= appName %>
-      - MONGO_INITDB_ROOT_PASSWORD=Hustonline87542701<%= appName %>
-      - MONGO_INITDB_DATABASE=<%= appName %>
-    container_name: <%= appName %>_mongo
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=
+    container_name: blog_mongo
     expose:
       - "27017"
     networks:
-      - <%= appName %>
+      - blog
   redis:
-    image: redis:4.0.8
+    image: redis:6.2.5
     expose:
       - "6379"
     environment:
       - TZ=Asia/Shanghai
-    container_name: <%= appName %>_redis
+    container_name: blog_redis
     volumes:
       - .data/redis:/data
       - /etc/localtime:/etc/localtime:ro
     tty: true
     networks:
-      - <%= appName %>
+      - blog
   app:
-    image: registry.cn-hangzhou.aliyuncs.com/bingyan/go-web-container:3.0
+    image: blog
     environment:
       - TZ=Asia/Shanghai
-      - ENV=prod
+      - ENV=
     ports:
       - "3265:3000"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./src:/app
+      - ./src:/src
       - ./env:/env
-      - ./log:/app/log
+      - ./log:/log
     depends_on:
       - mongo
       - redis
-    container_name: <%= appName %>_app
+    container_name: blog_app
     networks:
-      - <%= appName %>
+      - blog
+
 networks:
-  <%= appName %>:
+  blog:
     driver: overlay
+    attachable: true

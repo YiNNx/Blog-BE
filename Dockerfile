@@ -1,13 +1,16 @@
-# build
-FROM golang:1.15.5-alpine3.12 AS build
+FROM golang:1.18.3 AS builder
+
+ENV GOOS=linux \
+    CGO_ENABLED=0 \
+    GO111MODULE=on \
+    GOPROXY=https://goproxy.cn
+
 COPY ./src /src
 WORKDIR /src
-ENV "GOPROXY" "https://goproxy.io"
-RUN go build -o /build/app
+RUN go build -o /build/app  .
 
-# iamge
-FROM alpine:latest
-COPY --from=build /build/app /bin/app
-RUN mkdir /env
-WORKDIR /env
-ENTRYPOINT [ "/bin/app" ]
+FROM alpine:3.16.0
+
+COPY ./env /env
+COPY --from=builder /build/app /bin/app
+CMD /bin/app

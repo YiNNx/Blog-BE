@@ -85,7 +85,7 @@ func init() {
 	}
 
 	// 读取配置文件
-	data, err := ioutil.ReadFile(fmt.Sprintf("config/%s", configFile))
+	data, err := ioutil.ReadFile(fmt.Sprintf("./env/config/%s", configFile))
 
 	if err != nil {
 		log.Println("Read config error!")

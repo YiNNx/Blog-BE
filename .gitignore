@@ -13,3 +13,18 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# env file
+/.idea
+/.vscode
+
+# go sum
+go.sum
+
+# docker
+docker-compose.yml
+/.data
+/data
+
+# config file
+dev.yml

@@ -1,14 +1,15 @@
 package main
 
 import (
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+
 	"blog-1.0/config"
 	"blog-1.0/controller"
 	middleware2 "blog-1.0/middleware"
 	"blog-1.0/router"
 	"blog-1.0/util"
 	. "blog-1.0/util/log"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -16,7 +17,6 @@ func main() {
 	if err != nil {
 		Logger.Fatal(err)
 	}
-
 	if !ok {
 		return
 	}
