@@ -28,3 +28,4 @@ docker-compose.yml
 
 # config file
 dev.yml
+prod.yml

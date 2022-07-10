@@ -37,7 +37,6 @@ services:
       - "3265:3000"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./src:/src
       - ./env:/env
       - ./log:/log
     depends_on:
