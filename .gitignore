@@ -22,9 +22,12 @@
 go.sum
 
 # docker
-docker-compose.yml
+Dockerfile-dev
+docker-compose-dev.yml
+docker-compose-prod.yml
+/.build
 /.data
-/data
+/log
 
 # config file
 dev.yml

@@ -26,6 +26,6 @@ wechat:
 
 logConf:
   log_path: "/app/log"
-  log_file_name: "blog-1.0.log"
+  log_file_name: "blog.log"
 
 debug: true

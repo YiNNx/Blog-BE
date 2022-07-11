@@ -6,7 +6,7 @@ import (
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 
-	"blog-1.0/config"
+	"blog/config"
 )
 
 var (

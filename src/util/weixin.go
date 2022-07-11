@@ -13,10 +13,11 @@ import (
 	"net/http"
 	"strconv"
 
-	"blog-1.0/config"
-	. "blog-1.0/util/log"
 	"github.com/imroc/req"
 	jsoniter "github.com/json-iterator/go"
+
+	"blog/config"
+	"blog/util/log"
 )
 
 // WeixinSession 微信Session
@@ -192,12 +193,12 @@ func PostWeixinImgSecCheck(accessToken string, file multipart.File, fileName str
 func RefreshWeixinAccessToken() {
 	t, err := GetWeixinAccessToken()
 	if err != nil {
-		Logger.Errorf("Error on updating access_token from request: %s", err.Error())
+		log.Logger.Errorf("Error on updating access_token from request: %s", err.Error())
 		return
 	}
 
 	if t.ErrCode != 0 {
-		Logger.Errorf("Error on updating access_token from weixin: %s", t.ErrMsg)
+		log.Logger.Errorf("Error on updating access_token from weixin: %s", t.ErrMsg)
 		return
 	}
 
@@ -207,7 +208,7 @@ func RefreshWeixinAccessToken() {
 	//	return
 	//}
 
-	Logger.Printf("access_token has been refreshed")
+	log.Logger.Printf("access_token has been refreshed")
 }
 
 // GetWxaCodeUnlimited 获得小程序码

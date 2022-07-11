@@ -3,42 +3,41 @@ package context
 import (
 	"net/http"
 
-	"blog-1.0/config"
-
 	"github.com/labstack/echo/v4"
+
+	"blog/config"
 )
 
 // Response 返回值
 type Response struct {
-	Data    interface{} `json:"data"`
-	Error   string      `json:"error,omitempty"`
-	Message string      `json:"message"`
 	Success bool        `json:"success"`
-	ErrHint string      `json:"hint,omitempty"`
+	Message string      `json:"message"`
+	Hint    string      `json:"hint,omitempty"`
+	Data    interface{} `json:"data"`
 }
 
-// Success 成功
-func Success(c echo.Context, data interface{}) error {
+// SuccessResponse 成功
+func SuccessResponse(c echo.Context, data interface{}) error {
 	return c.JSON(http.StatusOK, Response{
-		Data:    data,
-		Error:   "",
 		Success: true,
+		Message: "",
+		Hint:    "",
+		Data:    data,
 	})
 }
 
-// Error 错误
-func Error(c echo.Context, status int, data string, err error) error {
+// ErrorResponse 错误
+func ErrorResponse(c echo.Context, code int, msg string, err error) error {
 	ret := Response{
-		Data:    nil,
-		Error:   data,
 		Success: false,
+		Message: msg,
 	}
 
 	if config.C.Debug {
 		if err != nil {
-			ret.Error = err.Error()
+			ret.Hint = err.Error()
 		}
 	}
 
-	return c.JSON(status, ret)
+	return c.JSON(code, ret)
 }

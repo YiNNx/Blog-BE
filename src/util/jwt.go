@@ -3,7 +3,7 @@ package util
 import (
 	"time"
 
-	"blog-1.0/config"
+	"blog/config"
 	"github.com/dgrijalva/jwt-go"
 )
 

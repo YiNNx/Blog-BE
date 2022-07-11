@@ -3,7 +3,7 @@
 ## Basic Format:
 
 - Address：` `
-- API prefix：`/api/v1`    ( omitted below )
+- API prefix：`/api/v1`    ( omitted below )c
 
 ## Data Exchange Format:
 
@@ -15,7 +15,7 @@
     "message": "",
     "hint": "",
     "data": {
-        ...
+        ... // any type
     }
 }
 ```
@@ -26,7 +26,7 @@
 {
     "success": false,
     "message": "error message",
-    "hint": "debug info",
+    "hint": "debug info",	// only return at DEBUG mode
     "data": {}
 }
 ```
@@ -41,7 +41,7 @@ Authenticate with Json Web Token. Be like:
 Authorization: Bearer TOKEN
 ```
 
-APIs is divided into three parts. View and Comment parts are available for everyone, while Post part needs Authorization. Sign-up is not opened publicly, and only the website owner  is able to sign in, post or revise posts and view the back-end data.
+APIs is divided into 2 parts. View & Comment part is available for everyone, while Post part needs Authorization. Sign-up is not opened publicly, and only the blog owner is able to sign in, post ,view the back-end data, etc.
 
 ## **Paginate**
 
@@ -88,6 +88,8 @@ Response
     ]
 }
 ```
+
+If there is no authorization, only posts with `Public` status will be returned.
 
 #### Get Post By Pid
 
@@ -279,7 +281,7 @@ Request
 }
 ```
 
-#### Change Profile
+#### Change Info
 
 `POST /info`
 

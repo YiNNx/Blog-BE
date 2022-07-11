@@ -8,12 +8,14 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"blog-1.0/util/context"
+	"blog/config"
+	"blog/util/context"
 )
 
-// TODO: 完成controller
-
 func HelloWorldHandler(c echo.Context) error {
+	if config.C.Debug{
+		return c.String(200, "yes")
+	}
 	return c.String(200, "Hello World!")
 }
 
@@ -21,9 +23,9 @@ func HelloWorldHandler(c echo.Context) error {
 func HTTPErrorHandler(err error, c echo.Context) {
 	httpError, ok := err.(*echo.HTTPError)
 	if ok {
-		_ = context.Error(c, httpError.Code, fmt.Sprintf("%s", httpError.Message), err)
+		context.ErrorResponse(c, httpError.Code, fmt.Sprintf("%s", httpError.Message), err)
 		return
 	}
 
-	_ = context.Error(c, http.StatusInternalServerError, "Unhandled internal server error", err)
+	context.ErrorResponse(c, http.StatusInternalServerError, "Unhandled internal server error", err)
 }

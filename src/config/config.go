@@ -77,7 +77,7 @@ type logConf struct {
 }
 
 func init() {
-	configFile := "default.yml"
+	configFile := "dev.yml"
 
 	// 如果有设置 ENV ，则使用ENV中的环境
 	if v, ok := os.LookupEnv("ENV"); ok {
@@ -85,11 +85,10 @@ func init() {
 	}
 
 	// 读取配置文件
-	data, err := ioutil.ReadFile(fmt.Sprintf("./env/config/%s", configFile))
+	data, err := ioutil.ReadFile(fmt.Sprintf("../env/config/%s", configFile))
 
 	if err != nil {
 		log.Println("Read config error!")
-		log.Panic(err)
 		return
 	}
 
@@ -99,15 +98,14 @@ func init() {
 
 	if err != nil {
 		log.Println("Unmarshal config error!")
-		log.Panic(err)
 		return
 	}
 
 	C = config
 
-	log.Println("Config " + configFile + " loaded.")
+	log.Println("[INFO] Config " + configFile + " loaded.")
 	if C.Debug {
-		log.Printf("%+v\n", C)
+		//log.Printf("%+v\n", C)
 	}
 
 }

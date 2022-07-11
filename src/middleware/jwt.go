@@ -1,16 +1,16 @@
 package middleware
 
 import (
-	"blog-1.0/config"
-	"blog-1.0/util"
-	. "blog-1.0/util/log"
-
 	"net/http"
 	"regexp"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	"blog/config"
+	"blog/util"
+	"blog/util/log"
 )
 
 // CustomJWTConfig custom jwt config
@@ -38,7 +38,7 @@ func CustomSkipper(skipperPaths []string) func(c echo.Context) bool {
 	regexStr := strings.Join(skipperPaths, "|")
 	r := regexp.MustCompile(regexStr)
 	if config.C.Debug {
-		Logger.Printf("Complied skipper string: %s", regexStr)
+		log.Logger.Printf("Complied skipper string: %s", regexStr)
 	}
 
 	return func(c echo.Context) bool {

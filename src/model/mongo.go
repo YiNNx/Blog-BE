@@ -2,19 +2,24 @@ package model
 
 import (
 	"fmt"
+	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"time"
-
-	"blog-1.0/config"
-	. "blog-1.0/util/log"
 	"golang.org/x/net/context"
+
+	"blog/config"
+	"blog/util/log"
 )
 
 var (
 	mongoClient *mongo.Client
+)
+
+const (
+	collectionInfoName    = "info"
+	collectionPostName    = "post"
+	collectionCommentName = "comment"
 )
 
 type dbTrait struct {
@@ -23,25 +28,31 @@ type dbTrait struct {
 
 func init() {
 	var err error
-	uri := fmt.Sprintf("mongodb://%s", config.C.DB.Addr)
+	uri := fmt.Sprintf(
+		"mongodb://%s:%s@mongo:%s",
+		config.C.DB.Username,
+		config.C.DB.Password,
+		config.C.DB.Addr,
+	)
 	mongoClient, err = mongo.NewClient(options.Client().ApplyURI(uri))
 	if err != nil {
-		panic(err)
+		log.Logger.Error(err)
 	}
 
 	// Ping test
 	ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
 	err = mongoClient.Connect(ctx)
 	if err != nil {
-		panic(err)
+		log.Logger.Error(err)
 	}
 
 	err = mongoClient.Ping(ctx, nil)
 	if err != nil {
-		panic(err)
+		log.Logger.Error(err)
 	}
-
-	Logger.Println("Database init done!")
+	if err == nil {
+		log.Logger.Println("MongoDB connected successfulliy!")
+	}
 }
 
 func GetMongoGlobalClient() *mongo.Client {

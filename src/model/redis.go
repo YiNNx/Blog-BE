@@ -1,8 +1,12 @@
 package model
 
 import (
-	"blog-1.0/config"
-	"github.com/go-redis/redis/v7"
+	"context"
+
+	"github.com/go-redis/redis/v8"
+
+	"blog/config"
+	"blog/util/log"
 )
 
 // 使用文档 https://redis.uptrace.dev/#executing-commands
@@ -17,9 +21,11 @@ func init() {
 			DB:       config.C.Redis.DB,
 		},
 	)
-
-	err := redisClient.Ping().Err()
+	ctx := context.Background()
+	err := redisClient.Ping(ctx).Err()
 	if err != nil {
-		panic(err)
+		log.Logger.Error(err)
+	} else {
+		log.Logger.Info("Redis connected successfully!")
 	}
 }

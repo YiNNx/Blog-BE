@@ -1,59 +1,56 @@
 package log
 
 import (
+	"fmt"
+	"os"
 	"path"
+	"path/filepath"
+	"runtime"
 	"time"
 
-	"blog-1.0/config"
+	"github.com/TwiN/go-color"
+	nested "github.com/antonfisher/nested-logrus-formatter"
+	"github.com/labstack/echo/v4"
+	echoLog "github.com/labstack/gommon/log"
 	rotatelogs "github.com/lestrrat/go-file-rotatelogs"
+	echologrusLog "github.com/neko-neko/echo-logrus/v2/log"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
+
+	"blog/config"
+	middleware "blog/middleware/log"
 )
 
-// 全局变量直接使用，logrus实现已带锁，使用样例如下：
-// import  ."blog-1.0/util/log"
-//  Logger.Info("msg")
-//  Logger.Debug("msg")
-//  Logger.Warn("msg")
-//  Logger.Error("msg")
-//  Logger.Fatal("msg")
 var Logger *logrus.Logger
 
 func init() {
 	Logger = getLogger()
-	if Logger == nil {
-		panic("Logger 初始化失败")
-	}
-	Logger.Info("Logger 初始化成功！")
+	Logger.Info("logger started")
 }
 
 func getLogger() *logrus.Logger {
 	logger := logrus.New()
-	logger.Formatter = new(logrus.JSONFormatter)
-	//记录调用位置：调用文件+调用行号+调用函数
-	//默认开启，开启会有20%-40%的性能损失
-	//如不想开启还想记录报错位置，可以对[Logger]进行进一步封装，见文件末尾
-	logger.SetReportCaller(true)
 
-	if config.C.Debug == true {
+	logger.SetReportCaller(true)
+	logger.SetFormatter(formatter())
+	logger.SetLevel(logrus.InfoLevel)
+	if config.C.Debug {
 		logger.SetLevel(logrus.DebugLevel)
 	}
 
-	logConfig := config.C.LogConf
-
-	baseLogPath := path.Join(logConfig.LogPath, logConfig.LogFileName)
+	baseLogPath := path.Join(config.C.LogConf.LogPath, config.C.LogConf.LogFileName)
 	writer, err := rotatelogs.New(
-		baseLogPath+".%Y-%m-%d-%H-%M",
-		rotatelogs.WithLinkName(baseLogPath),      // 生成软链，指向最新日志文件
-		rotatelogs.WithMaxAge(7*24*time.Hour),     // 文件最大保存时间
-		rotatelogs.WithRotationTime(24*time.Hour), // 日志切割时间间隔
+		baseLogPath+"-%Y-%m-%d",
+		rotatelogs.WithLinkName(baseLogPath),
+		rotatelogs.WithMaxAge(7*24*time.Hour),
+		rotatelogs.WithRotationTime(24*time.Hour),
 	)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
 	lfHook := lfshook.NewHook(lfshook.WriterMap{
-		logrus.DebugLevel: writer, // 为不同级别设置不同的输出目的
+		logrus.DebugLevel: writer,
 		logrus.InfoLevel:  writer,
 		logrus.WarnLevel:  writer,
 		logrus.ErrorLevel: writer,
@@ -65,13 +62,32 @@ func getLogger() *logrus.Logger {
 	return logger
 }
 
-//Logger 自定义封装的形式参考
-func writeLog(fileName, funcName, errMsg, from string, err error) {
-	Logger.WithFields(logrus.Fields{
-		"package":  "package_name",
-		"file":     fileName,
-		"function": funcName,
-		"err":      err,
-		"from":     from,
-	}).Warn(errMsg)
+func formatter() *nested.Formatter {
+	fmtter := &nested.Formatter{
+		HideKeys:        true,
+		TimestampFormat: "15:04:05",
+		CallerFirst:     false,
+		CustomCallerFormatter: func(frame *runtime.Frame) string {
+			funcInfo := runtime.FuncForPC(frame.PC)
+			if funcInfo == nil {
+				return "error during runtime.FuncForPC"
+			}
+			fullPath, line := funcInfo.FileLine(frame.PC)
+			return fmt.Sprintf(color.InBlue(" ⇨ %v (line%v)"), filepath.Base(fullPath), line)
+		},
+	}
+	fmtter.NoColors = false
+	return fmtter
+}
+
+// SetLoggerOfEcho switches the default logger of Echo to logrus with custom format.
+func SetLoggerOfEcho(e *echo.Echo) {
+	echologrusLog.Logger().SetOutput(os.Stdout)
+	echologrusLog.Logger().SetLevel(echoLog.INFO)
+	if config.C.Debug {
+		echologrusLog.Logger().SetLevel(echoLog.DEBUG)
+	}
+	echologrusLog.Logger().SetFormatter(formatter())
+	e.Logger = echologrusLog.Logger()
+	e.Use(middleware.GetLogger())
 }

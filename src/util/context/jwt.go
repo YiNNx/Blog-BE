@@ -1,8 +1,8 @@
 package context
 
 import (
-	"blog-1.0/config"
-	"blog-1.0/util"
+	"blog/config"
+	"blog/util"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 )

@@ -1,10 +1,10 @@
 package model
 
 import (
+	"blog/config"
 	"context"
 	"time"
 
-	"blog-1.0/config"
 	"github.com/go-pg/pg/v10"
 )
 
