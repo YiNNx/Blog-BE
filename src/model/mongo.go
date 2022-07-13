@@ -2,8 +2,11 @@ package model
 
 import (
 	"fmt"
+	"reflect"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/net/context"
@@ -16,17 +19,18 @@ var (
 	mongoClient *mongo.Client
 )
 
-const (
-	collectionInfoName    = "info"
-	collectionPostName    = "post"
-	collectionCommentName = "comment"
-)
+// GetCollectionName get the collectionName tag by reflect
+func GetCollectionName(obj interface{}) string {
+	field, _ := reflect.TypeOf(obj).FieldByName("collectionName")
+	labelValue := field.Tag.Get("collection")
+	return labelValue
+}
 
 type dbTrait struct {
 	db *mongo.Database
 }
 
-func init() {
+func ConnectMongo() {
 	var err error
 	uri := fmt.Sprintf(
 		"mongodb://%s:%s@mongo:%s",
@@ -39,54 +43,33 @@ func init() {
 		log.Logger.Error(err)
 	}
 
-	// Ping test
-	ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*time.Duration(config.C.DB.Timeout))
+	defer cancel()
 	err = mongoClient.Connect(ctx)
 	if err != nil {
 		log.Logger.Error(err)
 	}
-
 	err = mongoClient.Ping(ctx, nil)
 	if err != nil {
 		log.Logger.Error(err)
 	}
+
 	if err == nil {
-		log.Logger.Println("MongoDB connected successfulliy!")
+		log.Logger.Info("MongoDB connected successfulliy!")
 	}
 }
 
-func GetMongoGlobalClient() *mongo.Client {
-	return mongoClient
-}
-
-// session 事务，但是需要mongo在cluster模式，慎用
-func session(ctx context.Context, f func(ctx mongo.SessionContext) error) error {
-	session, err := mongoClient.StartSession()
+func Disconnect() {
+	err := mongoClient.Disconnect(context.Background())
 	if err != nil {
-		return err
+		log.Logger.Error(err)
 	}
-
-	err = session.StartTransaction()
-	if err != nil {
-		return err
-	}
-
-	err = mongo.WithSession(ctx, session, f)
-
-	if err != nil {
-		err = session.AbortTransaction(ctx)
-	} else {
-		err = session.CommitTransaction(ctx)
-	}
-
-	session.EndSession(ctx)
-	return err
 }
 
 func getDBTx(ctx context.Context) dbTrait {
 	err := mongoClient.Ping(ctx, nil)
 	if err != nil {
-		panic(err)
+		log.Logger.Error(err)
 	}
 
 	return dbTrait{
@@ -94,10 +77,55 @@ func getDBTx(ctx context.Context) dbTrait {
 	}
 }
 
-func (m *model) Close() {
-	// DO NOTHING
+// mongoCreateDocument 添加document
+func (m *model) CreateDocument(v interface{}) (primitive.ObjectID, error) {
+	coll := m.db.Collection(GetCollectionName(v))
+	res, err := coll.InsertOne(m.ctx, v)
+	return res.InsertedID.(primitive.ObjectID), err
 }
 
-func (m *model) Abort() {
-	m.abort = true
+func structToDoc(v interface{}) (bson.D, error) {
+	data, err := bson.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+	var doc bson.D
+	err = bson.Unmarshal(data, &doc)
+	if err != nil {
+		return nil, err
+	}
+	return doc, nil
+}
+
+// CAUTIOUS: v is a value not a pointer
+func (m *model) GetDocument(v interface{}) ([]byte, error) {
+	coll := m.db.Collection(GetCollectionName(v))
+	filter, err := structToDoc(v)
+	if err != nil {
+		return nil, err
+	}
+	var res bson.D
+	err = coll.FindOne(m.ctx, filter).Decode(&res)
+	if err != nil {
+		return nil, err
+	}
+	doc, err := bson.Marshal(res)
+	if err != nil {
+		return nil, err
+	}
+	return doc, nil
+}
+
+// mongoDeleteDocument 根据field删除document（多个）
+func (m *model) DeleteDocument(v interface{}) (int64, error) {
+	coll := m.db.Collection(GetCollectionName(v))
+	filter, err := structToDoc(v)
+	if err != nil {
+		return 0, err
+	}
+	deleteResult, err := coll.DeleteOne(m.ctx, filter)
+	if err != nil {
+		return 0, err
+	}
+	return deleteResult.DeletedCount, nil
 }

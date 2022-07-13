@@ -1,4 +1,4 @@
-package middleware
+package util
 
 import validator "gopkg.in/go-playground/validator.v9"
 

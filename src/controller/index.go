@@ -12,15 +12,19 @@ import (
 	"blog/util/context"
 )
 
-func HelloWorldHandler(c echo.Context) error {
-	if config.C.Debug{
-		return c.String(200, "yes")
+func HelloWorld(c echo.Context) error {
+	if config.C.Debug {
+		return c.String(200, "debuging")
 	}
 	return c.String(200, "Hello World!")
 }
 
 // HTTPErrorHandler 替换默认的错误处理，统一成目前使用的格式
 func HTTPErrorHandler(err error, c echo.Context) {
+	if c.Response().Committed {
+		return
+	}
+
 	httpError, ok := err.(*echo.HTTPError)
 	if ok {
 		context.ErrorResponse(c, httpError.Code, fmt.Sprintf("%s", httpError.Message), err)

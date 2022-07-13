@@ -9,7 +9,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=example
+      - MONGO_INITDB_ROOT_PASSWORD=password
     container_name: blog_mongo
     expose:
       - "27017"
@@ -22,8 +22,11 @@ services:
       - 8081:8081
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_URL: mongodb://root:password@mongo:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: username
+      ME_CONFIG_BASICAUTH_PASSWORD: password
+    container_name: blog_mgps
     depends_on:
       - mongo
     networks:
@@ -38,6 +41,9 @@ services:
     volumes:
       - .data/redis:/data
       - /etc/localtime:/etc/localtime:ro
+    command:
+      --requirepass "password" #set password
+    privileged: true
     tty: true
     networks:
       - blog
@@ -45,7 +51,7 @@ services:
     image: build .
     environment:
       - TZ=Asia/Shanghai
-      - ENV=dev
+      - ENV=
     ports:
       - "3000:3000"
     volumes:

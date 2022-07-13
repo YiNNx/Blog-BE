@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"blog/config"
+	"blog/util/log"
 )
 
 // Response 返回值
@@ -37,6 +38,7 @@ func ErrorResponse(c echo.Context, code int, msg string, err error) error {
 		if err != nil {
 			ret.Hint = err.Error()
 		}
+		log.Logger.Error(err)
 	}
 
 	return c.JSON(code, ret)

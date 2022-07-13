@@ -9,24 +9,24 @@
 
 - success:
 
-```json
+```
 {
     "success": true,
     "message": "",
     "hint": "",
     "data": {
-        ... // any type
+        ... //any type
     }
 }
 ```
 
 - error:
 
-```json
+```
 {
     "success": false,
     "message": "error message",
-    "hint": "debug info",	// only return at DEBUG mode
+    "hint": "debug info",	//only return at DEBUG mode
     "data": {}
 }
 ```
@@ -49,7 +49,7 @@ Most of the `GET` requests support pagination fuction by using query params `fro
 
 For example:
 
-`GET /post/all?from=0&amount=10`
+`GET /post?from=0&amount=10`
 
 ## API - View & Comment
 
@@ -97,7 +97,7 @@ If there is no authorization, only posts with `Public` status will be returned.
 
 Response
 
-```json
+```
 {
     "pid": 0,
     "status": 0,	//0-Public | 1-Private | 2-Script
@@ -114,9 +114,31 @@ Response
 }
 ```
 
+#### Get All Tags
+
+`GET /tag`
+
+```
+{
+	["TAG","TAG",...]
+}
+```
+
+#### Like
+
+`PUT /like/<pid>`
+
+Request
+
+```
+{
+	"status":true
+}
+```
+
 #### Get Comments of Post
 
-`GET /post/<pid>/comment`
+`GET /comment/<pid>`
 
 Response
 
@@ -134,31 +156,9 @@ Response
 }
 ```
 
-#### Get All Tags
-
-`GET /tag`
-
-```
-{
-	["TAG","TAG",...]
-}
-```
-
-#### Like
-
-`PUT /post/<pid>/like`
-
-Request
-
-```
-{
-	"status":true
-}
-```
-
 #### Comment
 
-`POST /post/<pid>/comment`
+`POST /comment/<pid>`
 
 Request
 
@@ -181,7 +181,7 @@ Response
 
 #### Sub Comment
 
-`POST /post/<pid>/comment`
+`POST /comment/<pid>`
 
 Request
 
@@ -223,13 +223,26 @@ Response
 
 *Token Needed
 
+#### Sign Up
+
+`GET /user/token?email=user@example.com&pwd=123456`
+
+Response：
+
+```
+{
+  "uid": 1,
+  "token": "JWTTOKEN"
+}
+```
+
 #### New Post
 
 `POST /post`
 
 Request
 
-```json
+```
 {
 	"status":0,	//0-Public | 1-Private | 2-Script
 	"title":"title",
@@ -283,7 +296,7 @@ Request
 
 #### Change Info
 
-`POST /info`
+`PUT LikePost/info`
 
 Request
 

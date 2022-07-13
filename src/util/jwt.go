@@ -3,26 +3,40 @@ package util
 import (
 	"time"
 
+	"github.com/golang-jwt/jwt"
+	"github.com/labstack/echo/v4/middleware"
+
 	"blog/config"
-	"github.com/dgrijalva/jwt-go"
 )
 
-const (
-	// jwt的过期时间，默认设置为7天
-	jwtExpiresDuration = time.Hour * 24 * 7
-)
-
-// JWTClaims 使用的JWT结构，JWT的修改请直接修改结构中的字段
-type JWTClaims struct {
+type JwtUserClaims struct {
+	Id   int  `json:"id"`
+	Role bool `json:"role"`
 	jwt.StandardClaims
-	ID int `json:"id"`
-	// TODO: 填写JWT字段
 }
 
-// GenerateJWTToken 根据键值对生成jwt token
-func GenerateJWTToken(claims JWTClaims) (string, error) {
-	claims.ExpiresAt = time.Now().Add(jwtExpiresDuration).Unix()
-	t := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+var Conf = middleware.JWTConfig{
+	Claims:     &JwtUserClaims{},
+	SigningKey: []byte(config.C.JWT.Secret),
+}
 
-	return t.SignedString([]byte(config.C.JWT.Secret))
+func GenerateToken(id int, role bool) string {
+	claims := &JwtUserClaims{
+		id,
+		role,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+		},
+	}
+
+	// Create token with claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Generate encoded token and send it as response.
+	t, err := token.SignedString([]byte(config.C.JWT.Secret))
+	if err != nil {
+		return "error"
+	}
+
+	return t
 }

@@ -5,21 +5,22 @@ import (
 )
 
 type Post struct {
-	ObjectID primitive.ObjectID `bson:"_id"`
-	Status   int                `bson:"status,omitempty"`
+	collectionName string `collection:"post" `
+
+	ObjectID primitive.ObjectID `bson:"_id,omitempty"`
+	Status   int                `bson:"status,omitempty"` //0-Public | 1-Private | 2-Script
+	Type     int                `bson:"type,omitempty"`   //0-PlainText | 1-Markdown | 2-HTML
 	Title    string             `bson:"title,omitempty"`
 	Time     int64              `bson:"time,omitempty"`
 
-	Digest  string `bson:"digest,omitempty"`
-	Content string `bson:"content,omitempty"`
+	Excerpt string   `bson:"excerpt,omitempty"`
+	Content string   `bson:"content,omitempty"`
+	Tags    []string `bson:"tags,omitempty"`
 
-	TopicID    primitive.ObjectID   `bson:"topic"`
-	CategoryID []primitive.ObjectID `bson:"category"`
+	Views    int `bson:"views,omitempty"`
+	Likes    int `bson:"likes,omitempty"`
+	Comments int `bson:"comments,omitempty"`
 
-	Views     int  `bson:"views"`
-	Likes     int  `bson:"likes"`
-	IsDeleted bool `bson:"is_deleted"`
+	IsDeleted bool `bson:"is_deleted,omitempty"`
 }
 
-type Tag struct {
-}

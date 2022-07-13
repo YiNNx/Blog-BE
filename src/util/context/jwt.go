@@ -1,29 +1,42 @@
 package context
 
 import (
+	"time"
+
+	"github.com/golang-jwt/jwt"
+	"github.com/labstack/echo/v4/middleware"
+
 	"blog/config"
-	"blog/util"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/labstack/echo/v4"
 )
 
-// GetAssociationFromJWT 获得JWTClaims
-func GetJWTClaims(c echo.Context) *util.JWTClaims {
-	return c.Get(config.JWTContextKey).(*jwt.Token).Claims.(*util.JWTClaims)
+type JwtUserClaims struct {
+	Id   int  `json:"id"`
+	Role bool `json:"role"`
+	jwt.StandardClaims
 }
 
-//获得payload中指定字段的值
-func GetJWTUserID(c echo.Context) string {
-	return getJWTFiled(c, "user_id")
+var Conf = middleware.JWTConfig{
+	Claims:     &JwtUserClaims{},
+	SigningKey: []byte(config.C.JWT.Secret),
 }
 
-func getJWTFiled(c echo.Context, filedName string) string {
-	token := c.Get(config.JWTContextKey)
-	if token != nil {
-		if tokenStr, ok := token.(*jwt.Token).Claims.(jwt.MapClaims)[filedName].(string); ok {
-			return tokenStr
-		}
-		return ""
+func GenerateToken(id int, role bool) string {
+	claims := &JwtUserClaims{
+		id,
+		role,
+		jwt.StandardClaims{
+			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
+		},
 	}
-	return ""
+
+	// Create token with claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Generate encoded token and send it as response.
+	t, err := token.SignedString([]byte(config.C.JWT.Secret))
+	if err != nil {
+		return "error"
+	}
+
+	return t
 }

@@ -47,6 +47,7 @@ type db struct {
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
 	DB       string `yaml:"db"`
+	Timeout  int    `yaml:"timeout_second"`
 }
 
 type redis struct {

@@ -34,7 +34,7 @@ func GetLogger() echo.MiddlewareFunc {
 			if err != nil {
 				errmsg = "\n" + err.Error()
 			}
-			log.Infof("%s%s %s %s %dms"+errmsg,
+			log.Debugf("%s%s %s %s %dms"+errmsg,
 				id,
 				c.RealIP(),
 				req.Method,
