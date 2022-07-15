@@ -31,9 +31,22 @@ func initEcho(e *echo.Echo) *echo.Echo {
 	return e
 }
 
+func testUnit() {
+	m := model.GetModel()
+	defer m.Close()
+
+	data, err := m.DeleteDocument(&model.Post{
+		Title: "test2",
+	})
+	log.Logger.Info((data))
+	log.Logger.Info(err)
+
+}
+
 func main() {
 	model.ConnectMongo()
 	defer model.Disconnect()
+	testUnit()
 
 	e := initEcho(echo.New())
 

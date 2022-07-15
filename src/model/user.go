@@ -20,30 +20,11 @@ type User struct {
 	GithubAddress string `bson:"github_address,omitempty"`
 }
 
-func (m *model) ValidateUser(email string, pwd string) (*User, error) {
-	u := User{
+func (m *Model) ValidateUser(email string, pwd string) error {
+	u := &User{
 		Email: email,
 	}
 	doc, err := m.GetDocument(u)
-	if err != nil {
-		return nil,err
-	}
-	err = bson.Unmarshal(doc, &u)
-	if err != nil {
-		return nil,err
-	}
-	err = bcrypt.ValidatePwd(pwd, u.PwdHash)
-	if err != nil {
-		return nil, err
-	}
-	return &u, nil
-}
-
-func (u *User)GetDocument()error{
-	m := GetModel()
-	defer m.Close()
-
-	doc, err := m.GetDocument(*u)
 	if err != nil {
 		return err
 	}
@@ -51,24 +32,9 @@ func (u *User)GetDocument()error{
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func (p *Post)GetDocument()error{
-	m := GetModel()
-	defer m.Close()
-
-	doc, err := m.GetDocument(*p)
-	if err != nil {
-		return err
-	}
-	err = bson.Unmarshal(doc, p)
+	err = bcrypt.ValidatePwd(pwd, u.PwdHash)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-type MongoModel interface{
-	GetDocument()error
 }

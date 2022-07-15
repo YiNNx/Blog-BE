@@ -101,10 +101,10 @@ Response
 {
     "pid": 0,
     "status": 0,	//0-Public | 1-Private | 2-Script
+    "type": 0,	//0-PlainText | 1-Markdown | 2-HTML
     "title": "",
     "time": "2022-01-01 20:00:00",
     "tag":["",""],
-    "type": 0,	//0-PlainText | 1-Markdown | 2-HTML
     "content": "",
     "stats": {
         "likes": 0,
@@ -223,7 +223,7 @@ Response
 
 *Token Needed
 
-#### Sign Up
+#### Log In
 
 `GET /user/token?email=user@example.com&pwd=123456`
 
@@ -245,11 +245,11 @@ Request
 ```
 {
 	"status":0,	//0-Public | 1-Private | 2-Script
-	"title":"title",
-	"excerpt":"",
 	"type":0, //0-PlainText | 1-Markdown | 2-HTML
-	"content":"content",
-    "tag":["tag1","tag2"]
+	"title":"title",
+    "tag":["tag1","tag2"],
+	"excerpt":"",
+	"content":"content"
 }
 ```
 

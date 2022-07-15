@@ -21,7 +21,8 @@ var JWT = []echo.MiddlewareFunc{
 func CustomJWT(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		role := c.Get(config.JWTContextKey).(*jwt.Token).Claims.(*util.JwtUserClaims).Role
-		if !role {
+		id := c.Get(config.JWTContextKey).(*jwt.Token).Claims.(*util.JwtUserClaims).Id
+		if !role || id != 0 {
 			err := errors.New("no permission")
 			return context.ErrorResponse(c, http.StatusForbidden, err.Error(), err)
 		}

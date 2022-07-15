@@ -20,8 +20,8 @@ var (
 )
 
 // GetCollectionName get the collectionName tag by reflect
-func GetCollectionName(obj interface{}) string {
-	field, _ := reflect.TypeOf(obj).FieldByName("collectionName")
+func GetCollectionName(p interface{}) string {
+	field := reflect.ValueOf(p).Elem().Type().Field(0)
 	labelValue := field.Tag.Get("collection")
 	return labelValue
 }
@@ -78,14 +78,31 @@ func getDBTx(ctx context.Context) dbTrait {
 }
 
 // mongoCreateDocument 添加document
-func (m *model) CreateDocument(v interface{}) (primitive.ObjectID, error) {
-	coll := m.db.Collection(GetCollectionName(v))
-	res, err := coll.InsertOne(m.ctx, v)
+func (m *Model) CreateDocument(p interface{}) (primitive.ObjectID, error) {
+	coll := m.db.Collection(GetCollectionName(p))
+	res, err := coll.InsertOne(m.ctx, p)
 	return res.InsertedID.(primitive.ObjectID), err
 }
 
-func structToDoc(v interface{}) (bson.D, error) {
-	data, err := bson.Marshal(v)
+func (m *Model) UpdateDocument(_id primitive.ObjectID, p interface{}) (int64, error) {
+	coll := m.db.Collection(GetCollectionName(p))
+	update, err := structToDoc(p)
+	if err != nil {
+		return 0, err
+	}
+	res, err := coll.UpdateOne(
+		m.ctx,
+		bson.D{{Key: "_id", Value: _id}},
+		bson.D{{Key: "$set", Value: update}},
+	)
+	if err != nil {
+		return 0, err
+	}
+	return res.ModifiedCount, nil
+}
+
+func structToDoc(p interface{}) (bson.D, error) {
+	data, err := bson.Marshal(p)
 	if err != nil {
 		return nil, err
 	}
@@ -97,10 +114,10 @@ func structToDoc(v interface{}) (bson.D, error) {
 	return doc, nil
 }
 
-// CAUTIOUS: v is a value not a pointer
-func (m *model) GetDocument(v interface{}) ([]byte, error) {
-	coll := m.db.Collection(GetCollectionName(v))
-	filter, err := structToDoc(v)
+// CAUTIOUS: p is a pointer
+func (m *Model) GetDocument(p interface{}) ([]byte, error) {
+	coll := m.db.Collection(GetCollectionName(p))
+	filter, err := structToDoc(p)
 	if err != nil {
 		return nil, err
 	}
@@ -116,10 +133,24 @@ func (m *model) GetDocument(v interface{}) ([]byte, error) {
 	return doc, nil
 }
 
-// mongoDeleteDocument 根据field删除document（多个）
-func (m *model) DeleteDocument(v interface{}) (int64, error) {
-	coll := m.db.Collection(GetCollectionName(v))
-	filter, err := structToDoc(v)
+func (m *Model) GetAllDocuments(p interface{}) ([]bson.D, error) {
+	coll := m.db.Collection(GetCollectionName(p))
+	cursor, err := coll.Find(m.ctx, bson.D{})
+	if err != nil {
+		return nil, err
+	}
+	var res []bson.D
+	err = cursor.All(m.ctx, &res)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
+// mongoDeleteDocument 根据field删除document
+func (m *Model) DeleteDocument(p interface{}) (int64, error) {
+	coll := m.db.Collection(GetCollectionName(p))
+	filter, err := structToDoc(p)
 	if err != nil {
 		return 0, err
 	}

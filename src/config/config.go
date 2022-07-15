@@ -40,6 +40,7 @@ type Config struct {
 type app struct {
 	Addr   string `yaml:"addr"`
 	Prefix string `yaml:"prefix"`
+	TimeFormat string `yaml:"timeformat"`
 }
 
 type db struct {
