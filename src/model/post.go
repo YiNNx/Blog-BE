@@ -12,7 +12,6 @@ type Post struct {
 	Status   int                `bson:"status,omitempty"` //0-Public | 1-Private | 2-Script
 	Type     int                `bson:"type,omitempty"`   //0-PlainText | 1-Markdown | 2-HTML
 	Title    string             `bson:"title,omitempty"`
-	Time     int64              `bson:"time,omitempty"`
 
 	Excerpt string   `bson:"excerpt,omitempty"`
 	Content string   `bson:"content,omitempty"`
@@ -27,6 +26,9 @@ type Post struct {
 
 func (m *Model) GetAllPost() (posts []Post, err error) {
 	res, err := m.GetAllDocuments(&Post{})
+	if err != nil {
+		return nil, err
+	}
 	for i := range res {
 		p := &Post{}
 		doc, _ := bson.Marshal(res[i])
@@ -40,12 +42,14 @@ func (m *Model) GetAllPost() (posts []Post, err error) {
 }
 
 func (m *Model) GetPostByPid(pid string) (p *Post, err error) {
-	var objectID primitive.ObjectID
-	objectID.UnmarshalJSON([]byte(pid))
+	objectID, err := stringToObjectID(pid)
+	if err != nil {
+		return nil, err
+	}
 	p = &Post{
 		ObjectID: objectID,
 	}
-	doc, err := m.GetDocument(p)
+	doc, err := m.GetOneDocument(p)
 	if err != nil {
 		return nil, err
 	}
@@ -69,8 +73,7 @@ func (m *Model) NewPost(p *Post) (pid string, err error) {
 }
 
 func (m *Model) UpdatePost(pid string, p *Post) (err error) {
-	var objectID primitive.ObjectID
-	err = objectID.UnmarshalText([]byte(pid))
+	objectID, err := stringToObjectID(pid)
 	if err != nil {
 		return err
 	}
@@ -79,4 +82,27 @@ func (m *Model) UpdatePost(pid string, p *Post) (err error) {
 		return err
 	}
 	return nil
+}
+
+func (m *Model) DeletePost(pid string) (err error) {
+	objectID, err := stringToObjectID(pid)
+	if err != nil {
+		return err
+	}
+	p := &Post{
+		ObjectID: objectID,
+	}
+	res, err := m.DeleteDocument(p)
+	if res != 1 || err != nil {
+		return err
+	}
+	return nil
+}
+
+func stringToObjectID(id string) (objectID primitive.ObjectID, err error) {
+	err = objectID.UnmarshalText([]byte(id))
+	if err != nil {
+		return [12]byte{}, err
+	}
+	return objectID, nil
 }

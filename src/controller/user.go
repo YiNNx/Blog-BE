@@ -29,7 +29,15 @@ func LogIn(c echo.Context) error {
 }
 
 func GetInfo(c echo.Context) error {
-	return context.SuccessResponse(c, nil)
+	m := model.GetModel()
+	defer m.Close()
+
+	u, err := m.GetInfo()
+	if err != nil {
+		return context.ErrorResponse(c, http.StatusInternalServerError, "", err)
+	}
+
+	return context.SuccessResponse(c, u)
 }
 
 func UpdateInfo(c echo.Context) error {

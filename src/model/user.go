@@ -24,7 +24,7 @@ func (m *Model) ValidateUser(email string, pwd string) error {
 	u := &User{
 		Email: email,
 	}
-	doc, err := m.GetDocument(u)
+	doc, err := m.GetOneDocument(u)
 	if err != nil {
 		return err
 	}
@@ -37,4 +37,19 @@ func (m *Model) ValidateUser(email string, pwd string) error {
 		return err
 	}
 	return nil
+}
+
+func (m *Model) GetInfo() (u *User, err error) {
+	res, err := m.GetAllDocuments(u)
+	if err != nil {
+		return nil, err
+	}
+
+	doc, _ := bson.Marshal(res[0])
+	err = bson.Unmarshal(doc, u)
+	if err != nil {
+		return nil, err
+	}
+
+	return u, err
 }

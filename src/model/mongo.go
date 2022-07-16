@@ -115,7 +115,7 @@ func structToDoc(p interface{}) (bson.D, error) {
 }
 
 // CAUTIOUS: p is a pointer
-func (m *Model) GetDocument(p interface{}) ([]byte, error) {
+func (m *Model) GetOneDocument(p interface{}) ([]byte, error) {
 	coll := m.db.Collection(GetCollectionName(p))
 	filter, err := structToDoc(p)
 	if err != nil {
@@ -133,6 +133,25 @@ func (m *Model) GetDocument(p interface{}) ([]byte, error) {
 	return doc, nil
 }
 
+func (m *Model) GetDocuments(p interface{}) ([]bson.D, error) {
+	coll := m.db.Collection(GetCollectionName(p))
+	filter, err := structToDoc(p)
+	if err != nil {
+		return nil, err
+	}
+	cur, err := coll.Find(m.ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	var res []bson.D
+	cur.All(m.ctx, &res)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
+
 func (m *Model) GetAllDocuments(p interface{}) ([]bson.D, error) {
 	coll := m.db.Collection(GetCollectionName(p))
 	cursor, err := coll.Find(m.ctx, bson.D{})
@@ -147,7 +166,7 @@ func (m *Model) GetAllDocuments(p interface{}) ([]bson.D, error) {
 	return res, nil
 }
 
-// mongoDeleteDocument 根据field删除document
+// mongoDeleteDocument
 func (m *Model) DeleteDocument(p interface{}) (int64, error) {
 	coll := m.db.Collection(GetCollectionName(p))
 	filter, err := structToDoc(p)

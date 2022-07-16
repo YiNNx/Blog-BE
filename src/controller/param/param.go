@@ -48,17 +48,20 @@ type RequestStatus struct {
 
 type ResponseGetComments struct {
 	Cid       string `json:"cid,omitempty"`
-	ParentCid int    `json:"parent_cid,omitempty"`
+	ParentCid string `json:"parent_cid,omitempty"`
+	Time      string `json:"time,omitempty"`
 	From      string `json:"from,omitempty"`
 	FromUrl   string `json:"from_url,omitempty"`
 	Content   string `json:"content,omitempty"`
 }
 
 type RequestComment struct {
-	From    string `json:"from,omitempty" validate:"required"`
-	FromUrl string `json:"from_url,omitempty"`
-	Email   string `json:"email,omitempty"`
-	Content string `json:"content,omitempty" validate:"required"`
+	From      string `json:"from,omitempty" validate:"required"`
+	To        string `json:"to,omitempty"`
+	ParentCid string `json:"parent_cid,omitempty"`
+	FromUrl   string `json:"from_url,omitempty"`
+	Email     string `json:"email,omitempty"`
+	Content   string `json:"content,omitempty" validate:"required"`
 }
 
 type ResponseStats struct {
@@ -80,6 +83,10 @@ type RequestNewPost struct {
 
 type ResponseNewPost struct {
 	Pid string `json:"pid,omitempty"`
+}
+
+type ResponseNewComment struct {
+	Cid string `json:"cid,omitempty"`
 }
 
 type RequestUpdatePost struct {

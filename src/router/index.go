@@ -44,7 +44,7 @@ func initPostRouters(g *echo.Group) {
 
 func initCommentRouters(g *echo.Group) {
 	g.GET("/:pid", controller.GetCommentsOfPost)
-	g.POST("/:pid", controller.Comment)
+	g.POST("/:pid", controller.NewComment)
 
 	g.DELETE("/:cid", controller.DeleteComment, middleware.JWT...)
 }
