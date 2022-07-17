@@ -9,19 +9,19 @@ type Post struct {
 	collectionName string `collection:"post" `
 
 	ObjectID primitive.ObjectID `bson:"_id,omitempty"`
-	Status   int                `bson:"status,omitempty"` //0-Public | 1-Private | 2-Script
-	Type     int                `bson:"type,omitempty"`   //0-PlainText | 1-Markdown | 2-HTML
-	Title    string             `bson:"title,omitempty"`
+	Status   int                `bson:"status"` //0-Public | 1-Private | 2-Script
+	Type     int                `bson:"type"`   //0-PlainText | 1-Markdown | 2-HTML
 
+	Title   string   `bson:"title,omitempty"`
 	Excerpt string   `bson:"excerpt,omitempty"`
 	Content string   `bson:"content,omitempty"`
 	Tags    []string `bson:"tags,omitempty"`
 
-	Views    int `bson:"views,omitempty"`
-	Likes    int `bson:"likes,omitempty"`
-	Comments int `bson:"comments,omitempty"`
+	Views    int `bson:"views"`
+	Likes    int `bson:"likes"`
+	Comments int `bson:"comments"`
 
-	IsDeleted bool `bson:"is_deleted,omitempty"`
+	IsDeleted bool `bson:"is_deleted"`
 }
 
 func (m *Model) GetAllPost() (posts []Post, err error) {

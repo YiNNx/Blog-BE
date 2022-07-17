@@ -39,8 +39,11 @@ func GetPosts(c echo.Context) (err error) {
 				Views:    posts[i].Views,
 				Comments: posts[i].Comments,
 			},
+			IsDeleted: posts[i].IsDeleted,
 		}
-		data = append(data, p)
+		if jwt || (p.IsDeleted == false && p.Status == 0) {
+			data = append(data, p)
+		}
 	}
 
 	return context.SuccessResponse(c, data)

@@ -4,96 +4,97 @@
 package param
 
 type Stats struct {
-	Likes    int `json:"likes,omitempty"`
-	Views    int `json:"views,omitempty"`
-	Comments int `json:"comments,omitempty"`
+	Likes    int `json:"likes"`
+	Views    int `json:"views"`
+	Comments int `json:"comments"`
 }
 
 type PostOutline struct {
-	Pid     string   `json:"pid,omitempty"`
-	Status  int      `json:"status,omitempty"`
-	Title   string   `json:"title,omitempty"`
-	Time    string   `json:"time,omitempty"`
-	Tags    []string `json:"tags,omitempty"`
-	Excerpt string   `json:"excerpt,omitempty"`
-	Stats   Stats    `json:"stats,omitempty"`
+	Pid       string   `json:"pid"`
+	Status    int      `json:"status"`
+	Title     string   `json:"title"`
+	Time      string   `json:"time"`
+	Tags      []string `json:"tags"`
+	Excerpt   string   `json:"excerpt"`
+	Stats     Stats    `json:"stats"`
+	IsDeleted bool     `json:"is_deleted"`
 }
 
 type ResponseGetPosts struct {
-	Posts []PostOutline `json:"posts,omitempty"`
+	Posts []PostOutline `json:"posts"`
 }
 
 type ResponseLogIn struct {
-	Token string `json:"token,omitempty"`
+	Token string `json:"token"`
 }
 
 type ResponseGetPostByPid struct {
-	Pid     string   `json:"pid,omitempty"`
-	Status  int      `json:"status,omitempty"`
-	Type    int      `json:"type,omitempty"`
-	Title   string   `json:"title,omitempty"`
-	Time    string   `json:"time,omitempty"`
-	Tags    []string `json:"tags,omitempty"`
-	Content string   `json:"content,omitempty"`
-	Stats   Stats    `json:"stats,omitempty"`
+	Pid     string   `json:"pid"`
+	Status  int      `json:"status"`
+	Type    int      `json:"type"`
+	Title   string   `json:"title"`
+	Time    string   `json:"time"`
+	Tags    []string `json:"tags"`
+	Content string   `json:"content"`
+	Stats   Stats    `json:"stats"`
 }
 
 type ResponseGetTags struct {
-	Tags []string `json:"tags,omitempty"`
+	Tags []string `json:"tags"`
 }
 
 type RequestStatus struct {
-	Status bool `json:"status,omitempty" validate:"required"`
+	Status bool `json:"status" validate:"required"`
 }
 
 type ResponseGetComments struct {
-	Cid       string `json:"cid,omitempty"`
-	ParentCid string `json:"parent_cid,omitempty"`
-	Time      string `json:"time,omitempty"`
-	From      string `json:"from,omitempty"`
-	FromUrl   string `json:"from_url,omitempty"`
-	Content   string `json:"content,omitempty"`
+	Cid       string `json:"cid"`
+	ParentCid string `json:"parent_cid"`
+	Time      string `json:"time"`
+	From      string `json:"from"`
+	FromUrl   string `json:"from_url"`
+	Content   string `json:"content"`
 }
 
 type RequestComment struct {
-	From      string `json:"from,omitempty" validate:"required"`
-	To        string `json:"to,omitempty"`
-	ParentCid string `json:"parent_cid,omitempty"`
-	FromUrl   string `json:"from_url,omitempty"`
-	Email     string `json:"email,omitempty"`
-	Content   string `json:"content,omitempty" validate:"required"`
+	From      string `json:"from" validate:"required"`
+	To        string `json:"to"`
+	ParentCid string `json:"parent_cid"`
+	FromUrl   string `json:"from_url"`
+	Email     string `json:"email"`
+	Content   string `json:"content" validate:"required"`
 }
 
 type ResponseStats struct {
-	Posts     int `json:"posts,omitempty"`
-	Timestamp int `json:"timestamp,omitempty"`
-	Views     int `json:"views,omitempty"`
-	Likes     int `json:"likes,omitempty"`
-	Comments  int `json:"comments,omitempty"`
+	Posts     int `json:"posts"`
+	Timestamp int `json:"timestamp"`
+	Views     int `json:"views"`
+	Likes     int `json:"likes"`
+	Comments  int `json:"comments"`
 }
 
 type RequestNewPost struct {
-	Status  int      `json:"status,omitempty"`
-	Type    int      `json:"type,omitempty"`
-	Title   string   `json:"title,omitempty" validate:"required"`
-	Tags    []string `json:"tags,omitempty"`
-	Excerpt string   `json:"excerpt,omitempty"`
-	Content string   `json:"content,omitempty" validate:"required"`
+	Status  int      `json:"status"`
+	Type    int      `json:"type"`
+	Title   string   `json:"title" validate:"required"`
+	Tags    []string `json:"tags"`
+	Excerpt string   `json:"excerpt"`
+	Content string   `json:"content" validate:"required"`
 }
 
 type ResponseNewPost struct {
-	Pid string `json:"pid,omitempty"`
+	Pid string `json:"pid"`
 }
 
 type ResponseNewComment struct {
-	Cid string `json:"cid,omitempty"`
+	Cid string `json:"cid"`
 }
 
 type RequestUpdatePost struct {
-	Status  int      `json:"status,omitempty"`
-	Type    int      `json:"type,omitempty"`
-	Title   string   `json:"title,omitempty"`
-	Tags    []string `json:"tags,omitempty"`
-	Excerpt string   `json:"excerpt,omitempty"`
-	Content string   `json:"content,omitempty"`
+	Status  int      `json:"status"`
+	Type    int      `json:"type"`
+	Title   string   `json:"title"`
+	Tags    []string `json:"tags"`
+	Excerpt string   `json:"excerpt"`
+	Content string   `json:"content"`
 }

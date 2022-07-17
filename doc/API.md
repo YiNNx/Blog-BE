@@ -247,9 +247,17 @@ Request
 	"status":0,	//0-Public | 1-Private | 2-Script
 	"type":0, //0-PlainText | 1-Markdown | 2-HTML
 	"title":"title",
-    "tag":["tag1","tag2"],
+    "tags":["tag1","tag2"],
 	"excerpt":"",
 	"content":"content"
+}
+```
+
+Response
+
+```
+{
+	"pid":""
 }
 ```
 

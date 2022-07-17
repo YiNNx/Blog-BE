@@ -40,7 +40,6 @@ func testUnit() {
 	})
 	log.Logger.Info((data))
 	log.Logger.Info(err)
-
 }
 
 func main() {
