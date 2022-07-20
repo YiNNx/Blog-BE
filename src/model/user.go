@@ -40,7 +40,7 @@ func (m *Model) ValidateUser(email string, pwd string) error {
 }
 
 func (m *Model) GetInfo() (u *User, err error) {
-	res, err := m.GetAllDocuments(u)
+	res, err := m.GetAllDocuments(u, 1, 0)
 	if err != nil {
 		return nil, err
 	}

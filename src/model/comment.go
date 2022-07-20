@@ -19,7 +19,7 @@ type Comment struct {
 
 	Content string `bson:"content,omitempty"`
 
-	IsDeleted bool `bson:"is_deleted"`
+	IsDeleted bool `bson:"is_deleted,omitempty"`
 }
 
 func (m *Model) NewComment(c *Comment) (cid string, err error) {
@@ -35,7 +35,7 @@ func (m *Model) NewComment(c *Comment) (cid string, err error) {
 }
 
 func (m *Model) UpdateComment(cid string, c *Comment) (err error) {
-	objectID, err := stringToObjectID(cid)
+	objectID, err := StringToObjectID(cid)
 	if err != nil {
 		return err
 	}
@@ -48,7 +48,7 @@ func (m *Model) UpdateComment(cid string, c *Comment) (err error) {
 
 func (m *Model) GetCommentsByPid(pid string) (comments []Comment, err error) {
 	res, err := m.GetDocuments(
-		&Comment{Pid: pid},
+		&Comment{Pid: pid}, 0, 0,
 	)
 	if err != nil {
 		return nil, err

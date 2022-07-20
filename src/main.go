@@ -32,14 +32,16 @@ func initEcho(e *echo.Echo) *echo.Echo {
 }
 
 func testUnit() {
-	m := model.GetModel()
-	defer m.Close()
+	// m := model.GetModel()
+	// defer m.Close()
 
-	data, err := m.DeleteDocument(&model.Post{
-		Title: "test2",
-	})
-	log.Logger.Info((data))
-	log.Logger.Info(err)
+	// objectID, err := model.StringToObjectID("62d2b7d3bf59f9da6c5fd155")
+	// p := &model.Post{
+	// 	ObjectID: objectID,
+	// }
+	// doc, err := m.GetOneDocument(p)
+	// log.Logger.Info(doc)
+	// log.Logger.Info(err)
 }
 
 func main() {

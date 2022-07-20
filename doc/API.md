@@ -45,11 +45,11 @@ APIs is divided into 2 parts. View & Comment part is available for everyone, whi
 
 ## **Paginate**
 
-Most of the `GET` requests support pagination fuction by using query params `from` and `amount`.
+Most of the `GET` requests support pagination fuction by using query params `skip` and `limit`.
 
 For example:
 
-`GET /post?from=0&amount=10`
+`GET /post?skip=0&limit=10`
 
 ## API - View & Comment
 
@@ -65,7 +65,7 @@ For example:
 
 `tag` - get posts by tag
 
-`from` & `amount` - paginate
+`skip & limit `amount` - paginate
 
 Response
 

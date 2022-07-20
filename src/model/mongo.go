@@ -133,13 +133,16 @@ func (m *Model) GetOneDocument(p interface{}) ([]byte, error) {
 	return doc, nil
 }
 
-func (m *Model) GetDocuments(p interface{}) ([]bson.D, error) {
+func (m *Model) GetDocuments(p interface{}, limit int64, skip int64) ([]bson.D, error) {
 	coll := m.db.Collection(GetCollectionName(p))
 	filter, err := structToDoc(p)
 	if err != nil {
 		return nil, err
 	}
-	cur, err := coll.Find(m.ctx, filter)
+	opts := options.Find().
+		SetSort(bson.D{{"_id", -1}}).
+		SetLimit(limit).SetSkip(skip)
+	cur, err := coll.Find(m.ctx, filter, opts)
 	if err != nil {
 		return nil, err
 	}
@@ -152,9 +155,12 @@ func (m *Model) GetDocuments(p interface{}) ([]bson.D, error) {
 	return res, nil
 }
 
-func (m *Model) GetAllDocuments(p interface{}) ([]bson.D, error) {
+func (m *Model) GetAllDocuments(p interface{}, limit int64, skip int64) ([]bson.D, error) {
 	coll := m.db.Collection(GetCollectionName(p))
-	cursor, err := coll.Find(m.ctx, bson.D{})
+	opts := options.Find().
+		SetSort(bson.D{{"_id", -1}}).
+		SetLimit(limit).SetSkip(skip)
+	cursor, err := coll.Find(m.ctx, bson.D{}, opts)
 	if err != nil {
 		return nil, err
 	}

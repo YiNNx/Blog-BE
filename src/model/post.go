@@ -9,23 +9,25 @@ type Post struct {
 	collectionName string `collection:"post" `
 
 	ObjectID primitive.ObjectID `bson:"_id,omitempty"`
-	Status   int                `bson:"status"` //0-Public | 1-Private | 2-Script
-	Type     int                `bson:"type"`   //0-PlainText | 1-Markdown | 2-HTML
+	Status   int                `bson:"status,omitempty"` //0-Public | 1-Private | 2-Script
+	Type     int                `bson:"type,omitempty"`   //0-PlainText | 1-Markdown | 2-HTML
 
 	Title   string   `bson:"title,omitempty"`
 	Excerpt string   `bson:"excerpt,omitempty"`
 	Content string   `bson:"content,omitempty"`
 	Tags    []string `bson:"tags,omitempty"`
 
-	Views    int `bson:"views"`
-	Likes    int `bson:"likes"`
-	Comments int `bson:"comments"`
+	Views    int `bson:"views,omitempty"`
+	Likes    int `bson:"likes,omitempty"`
+	Comments int `bson:"comments,omitempty"`
 
-	IsDeleted bool `bson:"is_deleted"`
+	IsDeleted bool `bson:"is_deleted,omitempty"`
 }
 
-func (m *Model) GetAllPost() (posts []Post, err error) {
-	res, err := m.GetAllDocuments(&Post{})
+func (m *Model) GetAllPost(limit int64, skip int64) (posts []Post, err error) {
+	res, err := m.GetAllDocuments(
+		&Post{IsDeleted: false}, limit, skip,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -36,13 +38,15 @@ func (m *Model) GetAllPost() (posts []Post, err error) {
 		if err != nil {
 			return nil, err
 		}
-		posts = append(posts, *p)
+		if !p.IsDeleted {
+			posts = append(posts, *p)
+		}
 	}
 	return posts, err
 }
 
 func (m *Model) GetPostByPid(pid string) (p *Post, err error) {
-	objectID, err := stringToObjectID(pid)
+	objectID, err := StringToObjectID(pid)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +77,7 @@ func (m *Model) NewPost(p *Post) (pid string, err error) {
 }
 
 func (m *Model) UpdatePost(pid string, p *Post) (err error) {
-	objectID, err := stringToObjectID(pid)
+	objectID, err := StringToObjectID(pid)
 	if err != nil {
 		return err
 	}
@@ -85,7 +89,7 @@ func (m *Model) UpdatePost(pid string, p *Post) (err error) {
 }
 
 func (m *Model) DeletePost(pid string) (err error) {
-	objectID, err := stringToObjectID(pid)
+	objectID, err := StringToObjectID(pid)
 	if err != nil {
 		return err
 	}
@@ -99,10 +103,29 @@ func (m *Model) DeletePost(pid string) (err error) {
 	return nil
 }
 
-func stringToObjectID(id string) (objectID primitive.ObjectID, err error) {
+func StringToObjectID(id string) (objectID primitive.ObjectID, err error) {
 	err = objectID.UnmarshalText([]byte(id))
 	if err != nil {
 		return [12]byte{}, err
 	}
 	return objectID, nil
+}
+
+func (m *Model) GetDeletedPost() (posts []Post, err error) {
+	res, err := m.GetDocuments(
+		&Post{IsDeleted: true}, 0, 0,
+	)
+	if err != nil {
+		return nil, err
+	}
+	for i := range res {
+		p := &Post{}
+		doc, _ := bson.Marshal(res[i])
+		err = bson.Unmarshal(doc, p)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, *p)
+	}
+	return posts, err
 }

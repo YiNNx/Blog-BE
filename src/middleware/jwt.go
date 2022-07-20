@@ -3,6 +3,7 @@ package middleware
 import (
 	"errors"
 	"net/http"
+	"strings"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
@@ -30,22 +31,19 @@ func CustomJWT(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-type contextValue map[string]interface{}
-
-func JwtMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func JwtCheck(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-
+		if c.Request().Header["Authorization"] == nil {
+			c.Set("authorized", false)
+			return next(c)
+		}
 		token := strings.Replace(c.Request().Header["Authorization"][0], "Bearer ", "", -1)
 		claims, err := util.ParseToken(token)
 		if err != nil || claims == nil {
-			errorMessage(c, err)
-			return
+			c.Set("authorized", false)
+		} else {
+			c.Set("authorized", true)
 		}
-		data := contextValue{
-			"claims": claims,
-		}
-		ctx := context.WithValue(r.Context(), "jwt", data)
-		// next handler
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+		return next(c)
+	}
 }

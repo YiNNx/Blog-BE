@@ -29,14 +29,15 @@ type ResponseLogIn struct {
 }
 
 type ResponseGetPostByPid struct {
-	Pid     string   `json:"pid"`
-	Status  int      `json:"status"`
-	Type    int      `json:"type"`
-	Title   string   `json:"title"`
-	Time    string   `json:"time"`
-	Tags    []string `json:"tags"`
-	Content string   `json:"content"`
-	Stats   Stats    `json:"stats"`
+	Pid       string   `json:"pid"`
+	IsDeleted bool     `json:"is_deleted"`
+	Status    int      `json:"status"`
+	Type      int      `json:"type"`
+	Title     string   `json:"title"`
+	Time      string   `json:"time"`
+	Tags      []string `json:"tags"`
+	Content   string   `json:"content"`
+	Stats     Stats    `json:"stats"`
 }
 
 type ResponseGetTags struct {

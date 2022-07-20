@@ -40,3 +40,17 @@ func GenerateToken(id int, role bool) string {
 
 	return t
 }
+
+
+func ParseToken(token string) (*JwtUserClaims, error) {
+	tokenClaims, err := jwt.ParseWithClaims(token, &JwtUserClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(config.C.JWT.Secret), nil
+	})
+
+	if tokenClaims != nil {
+		if claims, ok := tokenClaims.Claims.(*JwtUserClaims); ok && tokenClaims.Valid {
+			return claims, nil
+		}
+	}
+	return nil, err
+}

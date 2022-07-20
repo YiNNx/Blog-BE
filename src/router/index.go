@@ -9,6 +9,7 @@ import (
 
 // InitRouters 初始化所有路由，可以每个路由分函数分文件写，方便之后维护
 func InitRouters(g *echo.Group) {
+	g.Use(middleware.JwtCheck)
 
 	groupPost := g.Group("/post")
 	initPostRouters(groupPost)
@@ -37,6 +38,7 @@ func initPostRouters(g *echo.Group) {
 	g.GET("", controller.GetPosts)
 	g.GET("/:pid", controller.GetPostByPid)
 
+	g.GET("/deleted", controller.GetDeletedPosts, middleware.JWT...)
 	g.POST("", controller.NewPost, middleware.JWT...)
 	g.PUT("/:pid", controller.UpdatePost, middleware.JWT...)
 	g.DELETE("/:pid", controller.DeletePost, middleware.JWT...)
