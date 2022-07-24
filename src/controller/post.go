@@ -14,7 +14,7 @@ import (
 )
 
 func GetPosts(c echo.Context) (err error) {
-	year := c.QueryParam("year")
+	// year := c.QueryParam("year")
 	// keyword := c.QueryParam("keyword")
 	// tag := c.QueryParam("tag")
 	limit, err := strconv.Atoi(c.QueryParam("limit"))

@@ -2,8 +2,8 @@
 
 ## Basic Format:
 
-- Address：` `
-- API prefix：`/api/v1`    ( omitted below )c
+- Address：`api.blog.just-plain.fun:3000 `
+- API prefix：`/api/v1`    ( omitted below )
 
 ## Data Exchange Format:
 
@@ -58,8 +58,6 @@ For example:
 `GET /post`
 
 `year` - specified year
-
-`month` - specified month
 
 `keyword` - search
 
@@ -225,7 +223,7 @@ Response
 
 #### Log In
 
-`GET /user/token?email=user@example.com&pwd=123456`
+`GET /token?email=user@example.com&pwd=123456`
 
 Response：
 

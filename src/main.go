@@ -31,23 +31,9 @@ func initEcho(e *echo.Echo) *echo.Echo {
 	return e
 }
 
-func testUnit() {
-	// m := model.GetModel()
-	// defer m.Close()
-
-	// objectID, err := model.StringToObjectID("62d2b7d3bf59f9da6c5fd155")
-	// p := &model.Post{
-	// 	ObjectID: objectID,
-	// }
-	// doc, err := m.GetOneDocument(p)
-	// log.Logger.Info(doc)
-	// log.Logger.Info(err)
-}
-
 func main() {
 	model.ConnectMongo()
 	defer model.Disconnect()
-	testUnit()
 
 	e := initEcho(echo.New())
 

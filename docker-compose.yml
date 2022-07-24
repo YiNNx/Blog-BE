@@ -48,7 +48,7 @@ services:
     networks:
       - blog
   app:
-    image: build .
+    build: yinfordocker/myblog
     environment:
       - TZ=Asia/Shanghai
       - ENV=
